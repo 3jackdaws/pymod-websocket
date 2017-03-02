@@ -5,6 +5,8 @@ from tornado.web import Application
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
+from settings import SSL_CERT, SSL_KEY
+
 
 if __name__ == "__main__":
     load_modules()
@@ -13,8 +15,8 @@ if __name__ == "__main__":
         (r'/api/?(.*?)/(.*)', IsoGetHandler)
     ])
     server = HTTPServer(iso_app, ssl_options={
-        "certfile": "/var/www/ssl/isogen.net/fullchain.pem",
-        "keyfile": "/var/www/ssl/isogen.net/privkey.pem",
+        "certfile": SSL_CERT,
+        "keyfile": SSL_KEY,
     })
     server.listen(8000)
     IOLoop.instance().start()
