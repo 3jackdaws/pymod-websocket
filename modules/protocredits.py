@@ -1,8 +1,13 @@
-import asyncio
-import websockets
-# import pymysql
+
 
 endpoint = "protocredits"
 
-async def on_message(websocket:websockets.WebSocketClientProtocol, message:str):
-    await websocket.send("Hi")
+def on_request(request, message):
+    print(request, message)
+
+def on_message(websocket, arguments, message):
+    print(message)
+
+def on_open(websocket, path):
+    print(path)
+
