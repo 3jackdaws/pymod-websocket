@@ -25,13 +25,18 @@ def on_message(websocket, message):
 
     elif action == "alter":
         note = get_note(message)
-        if note['id'] in stickynotes:
-            content = stickynotes[note['id']]['content']
-            text_changed = True
-            if content == note['content']:
-                text_changed = False
-            stickynotes[note['id']] = note
-            util.send_to_all(clients, create_alter_message(note, text_changed))
+        note_id = note['id']
+        if note_id in stickynotes:
+            text_changed = False if note['content'] == 0 else True
+            old_content = stickynotes[note_id]['content']
+            # note['content'] = old_content
+            util.send_to_all_except(clients, websocket, create_alter_message(note))
+            if not text_changed:
+                note['content'] = old_content
+            stickynotes[note_id] = note
+
+
+            # print(stickynotes[note_id])
     elif action == "fetch":
         for noteid in stickynotes:
             websocket.write_message(create_alter_message(stickynotes[noteid]))
@@ -93,10 +98,8 @@ def create_note(note):
     return note
 
 def create_alter_message(note, text_changed=True):
-    note["action"] = "alter"
-    if not text_changed:
-        note['content'] = 0
-    return json.dumps(note)
+    # content = note['content'] if text_changed else 0
+    return json.dumps(dict(note, action="alter"))
 
 def create_delete_message(id):
     return json.dumps({
