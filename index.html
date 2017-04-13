@@ -1,0 +1,47 @@
+<head>
+    <style>
+        .message{
+            font-size: 20px;
+            font-family:sans-serif;
+        }
+
+        .message .author{
+            color: #ff5555;
+        }
+    </style>
+</head>
+
+<div id="chat-log" style="height: 100%">
+
+</div>
+<div style="position: fixed; width: 100%; height: 50px; bottom: 0; left: 0; font-size: 40px; font-family: sans-serif">
+    <input placeholder="username" id="user" style="width: 20%; height: 100%; float: left; font-size: inherit">
+    <input placeholder="message" id="chat" style="width: 70%; height: 100%; float: left; font-size: inherit" onkeypress="enter(event)">
+    <div style="width: 9%; height: 100%; float: left;background: #5555ff; color: white;" onclick="sendmessage()">Send</div>
+</div>
+
+<script src="ISOMQ.js"></script>
+<script>
+    var mq = new IsoMQ('localhost:8000', "chat");
+    mq.onmessage = function () {
+        var div = document.createElement("div");
+        var message = JSON.parse(event.data);
+        div.innerHTML = "<span class='author'>[" + message.user + "]: </span> " + message.text;
+        div.className = "message";
+        document.getElementById("chat-log").appendChild(div);
+    };
+
+
+    function sendmessage() {
+        var message = document.getElementById("chat").value;
+        document.getElementById("chat").value = "";
+        var user = document.getElementById("user").value;
+        var data = {user:user, text:message};
+        mq.send(data);
+    }
+
+    function enter(event){
+        console.log(event);
+        if (event.key == "Enter") sendmessage();
+    }
+</script>
