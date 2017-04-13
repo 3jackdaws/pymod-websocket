@@ -22,8 +22,12 @@
 
 <script src="ISOMQ.js"></script>
 <script>
-    var mq = new IsoMQ('localhost:8000', "chat");
+    var start;
+    var end;
+    var mq = new IsoMQ('isogen.net:8000', "chat");
     mq.onmessage = function () {
+        end = performance.now();
+        console.info(end - start);
         var div = document.createElement("div");
         var message = JSON.parse(event.data);
         div.innerHTML = "<span class='author'>[" + message.user + "]: </span> " + message.text;
@@ -37,6 +41,7 @@
         document.getElementById("chat").value = "";
         var user = document.getElementById("user").value;
         var data = {user:user, text:message};
+        start = performance.now();
         mq.send(data);
     }
 

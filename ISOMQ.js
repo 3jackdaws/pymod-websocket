@@ -5,7 +5,7 @@
 
 function IsoMQ(url, channel){
     var _this = this;
-    this.url = "ws://" + url + "/" + channel;
+    this.url = "wss://" + url + "/" + channel;
     console.log(this.url);
     this.socket = new WebSocket(this.url);
     this.socket.onerror = this.onerror;
